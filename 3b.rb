@@ -1,6 +1,5 @@
-presents = {}
+presents = Hash.new(0)
 deliver_to = ->(x, y) do
-  presents[[x, y]] ||= 0
   presents[[x, y]] += 1
 end
 
