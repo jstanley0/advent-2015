@@ -19,21 +19,22 @@ fn count_neighbors(grid: &Vec<Vec<char>>, x: usize, y: usize) -> i32 {
     count
 }
 
-fn iterate(grid: &Vec<Vec<char>>) -> Vec<Vec<char>> {
-    let mut result = Vec::<Vec<char>>::with_capacity(grid.len());
+fn iterate(grid: &mut Vec<Vec<char>>, scratch: &mut Vec<Vec<char>>) {
     for y in 0..grid.len() {
-        let mut row = Vec::<char>::with_capacity(grid[y].len());
         for x in 0..grid[y].len() {
-            let n = count_neighbors(grid, x, y);
-            if grid[y][x] == '#' {
-                row.push( if n == 2 || n == 3 { '#' } else { '.' } );
+            scratch[y][x] = grid[y][x];
+        }
+    }
+    for y in 0..grid.len() {
+        for x in 0..grid[y].len() {
+            let n = count_neighbors(scratch, x, y);
+            grid[y][x] = if scratch[y][x] == '#' {
+                if n == 2 || n == 3 { '#' } else { '.' }
             } else {
-                row.push( if n == 3 { '#' } else { '.' } );
+                if n == 3 { '#' } else { '.' }
             }
         }
-        result.push(row);
     }
-    result
 }
 
 fn stick_on(grid: &mut Vec<Vec<char>>) {
@@ -65,9 +66,10 @@ fn main() -> std::io::Result<()> {
         grid.push(line.trim_end().chars().collect());
     }
 
+    let mut scratch = grid.clone();
     for _ in 0..iters {
         stick_on(&mut grid);
-        grid = iterate(&grid);
+        iterate(&mut grid, &mut scratch);
     }
     stick_on(&mut grid);
 
