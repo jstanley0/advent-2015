@@ -13,6 +13,4 @@ def find_sequence(row, col)
 end
 
 n = find_sequence(2947, 3029)
-v = 20151125
-(n - 1).times { v = (v * 252533) % 33554393 }
-puts v
+puts (20151125 * 252533.pow(n, 33554393)) % 33554393
